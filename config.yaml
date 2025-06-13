@@ -1,0 +1,3 @@
+hostname: flaskapp.example.com
+port: 5000
+datacenter: nyc1
