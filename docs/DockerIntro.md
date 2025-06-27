@@ -232,3 +232,5 @@ Purpose: Configures a container that will run as an executable. If `CMD` is also
 Example: `ENTRYPOINT ["/usr/bin/supervisord"]` (Makes supervisord the main process)
 
 Note: `ENTRYPOINT` is less commonly overridden than `CMD`.
+
+BTW for wls `docker` commands will be `podman` instead.
