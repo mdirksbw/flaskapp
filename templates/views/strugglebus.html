@@ -1,0 +1,9 @@
+{% include "views/header.html" %}
+<h1><strong>{{ user }} is on the strugglebus! BEEP FKN BEEP</strong></h1>
+<p>This is the testing page for {{ user }}.</p>
+<ul>
+{% for key, value in envvar.items() %}
+    <li><strong>{{ key|e }}:</strong> {{ value|e }}</li>
+{% endfor %}
+</ul>
+{% include "views/footer.html" %}
