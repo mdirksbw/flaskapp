@@ -17,6 +17,7 @@ Welcome to the world of Docker! This guide will walk you through the fundamental
       - [Running a Container (Interactive Mode)](#running-a-container-interactive-mode)
     - [Building Your Own: Basics of Writing a Dockerfile](#building-your-own-basics-of-writing-a-dockerfile)
       - [What is a Dockerfile?](#what-is-a-dockerfile)
+  - [References](#references)
 
 ---
 
@@ -234,3 +235,6 @@ Example: `ENTRYPOINT ["/usr/bin/supervisord"]` (Makes supervisord the main proce
 Note: `ENTRYPOINT` is less commonly overridden than `CMD`.
 
 BTW for wls `docker` commands will be `podman` instead.
+
+## References
+* [Dockerfile Reference](https://docs.docker.com/reference/dockerfile/)
