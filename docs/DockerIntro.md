@@ -17,6 +17,7 @@ Welcome to the world of Docker! This guide will walk you through the fundamental
       - [Running a Container (Interactive Mode)](#running-a-container-interactive-mode)
     - [Building Your Own: Basics of Writing a Dockerfile](#building-your-own-basics-of-writing-a-dockerfile)
       - [What is a Dockerfile?](#what-is-a-dockerfile)
+    - [Writing and building our first container image](#writing-and-building-our-first-container-image)
   - [References](#references)
 
 ---
@@ -236,5 +237,65 @@ Note: `ENTRYPOINT` is less commonly overridden than `CMD`.
 
 BTW for wls `docker` commands will be `podman` instead.
 
+### Writing and building our first container image
+
+Building the container
+```bash
+docker build -t flynshue .
+STEP 1/2: FROM public.ecr.aws/docker/library/python:3.13.5-bullseye
+STEP 2/2: ADD . /opt/flaskapp/
+COMMIT flynshue
+--> ffa16f8e2fb9
+Successfully tagged localhost/flynshue:latest
+```
+
+This is what the container looks like within our local registry
+```bash
+ docker images
+REPOSITORY                                                      TAG              IMAGE ID      CREATED        SIZE
+localhost/flynshue                                              latest           ffa16f8e2fb9  6 seconds ago  925 MB
+```
+
+That tag doesn't really tell us what the container image is for and is confusing.  Let's rename that image tag
+```bash
+docker tag localhost/flynshue:latest flynshue/flaskapp:v0.0.1
+```
+
+Now we can see that the container is the same image
+```bash
+ docker images
+REPOSITORY                                                      TAG              IMAGE ID      CREATED             SIZE
+localhost/flynshue                                              latest           ffa16f8e2fb9  About a minute ago  925 MB
+localhost/flynshue/flaskapp                                     v0.0.1           ffa16f8e2fb9  About a minute ago  925 MB
+```
+
+Let's shell into the container we just built and see what we have
+
+```bash
+docker run --rm -it \
+--env USER=$(whoami) \
+--publish 5000:5000 \
+github.com/mdirks-bw/flaskapp:v0.0.1 /bin/bash
+```
+
+We fixed the dockerfile to start flask
+```bash
+docker run --rm -d \
+--env USER=$(whoami) \
+--publish 5000:5000 \
+github.com/mdirks-bw/flaskapp:v0.0.1
+```
+
+Let's mount the config as a volume
+```bash
+docker run --rm -d \
+--env USER=$(whoami) \
+--publish 5000:5000 \
+--volume ./config.yaml:/opt/flaskapp/config.yaml \
+github.com/mdirks-bw/flaskapp:v0.0.1
+```
+
 ## References
 * [Dockerfile Reference](https://docs.docker.com/reference/dockerfile/)
+* [.dockerignore](https://docs.docker.com/reference/dockerfile/#dockerignore-file)
+* [Docker publish ports](https://docs.docker.com/reference/cli/docker/container/run/#publish)
