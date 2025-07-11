@@ -9,6 +9,7 @@ PAGES = ["config", "strugglebus"]
 
 app_name = os.getenv('APP_NAME', "flaskapp")
 
+
 @app.route("/")
 @app.route("/home")
 def home():

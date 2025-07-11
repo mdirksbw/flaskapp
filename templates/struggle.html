@@ -1,4 +1,18 @@
 {% extends "base.html" %}
+<nav class="navbar">
+  <div class="container">
+    <div id="navMenu" class="navbar-menu">
+      <div class="navbar-start">
+        <a href="/" class="navbar-item" >home</a>
+        {% for page in pages %}
+        <a href="/{{ page }}" class="navbar-item">
+          {{page}}
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</nav>
 {% block content %}
 <h1><strong>{{ user }} is on the strugglebus! BEEP FKN BEEP</strong></h1>
 <p>This is the testing page for {{ user }}.</p>
