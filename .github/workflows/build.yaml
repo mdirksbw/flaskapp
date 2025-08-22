@@ -33,7 +33,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4.3.1
         with:
           aws-region: us-east-1
-          role-to-assume: arn:aws:iam::187592727246:role/gha-ecr-role-madi
+          role-to-assume: arn:aws:iam::551481644935:role/gha_ecr
 
       - name: describe repository
         run: |
