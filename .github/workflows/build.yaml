@@ -30,6 +30,13 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
 
+      - name: Get version
+        id: version
+        run: |
+          VERSION=$(cat VERSION)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "shortsha=$(git log -1 --pretty='format:%h')" >> "$GITHUB_OUTPUT"
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4.3.1
         with:
@@ -45,9 +52,8 @@ jobs:
       - name: Build, tag, and push docker image to Amazon ECR Public
         env:
           REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
-          IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG .
+          docker build -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:${{ steps.version.outputs.version }}-${{ steps.version.outputs.shortsha }} .
       #    docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
 
       # - name: Log in to Docker Hub
