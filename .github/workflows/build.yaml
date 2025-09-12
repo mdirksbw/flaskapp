@@ -19,25 +19,36 @@ on:
 
 jobs:
   build:
+    env:
+      AWS_ACCOUNT_ID: 551481644935
+      AWS_REGION: us-east-1
+      REGISTRY_ALIAS: medirks
+      REPOSITORY: flaskapp
     name: Build container
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
 
-      - name: Test reading Dockerfile
-        run: |
-          cat Dockerfile
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4.3.1
         with:
-          aws-region: us-east-1
-          role-to-assume: arn:aws:iam::551481644935:role/gha_ecr
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/gha_ecr
 
-      - name: describe repository
+      - name: Login to Amazon ECR Public
+        id: login-ecr-public
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+
+      - name: Build, tag, and push docker image to Amazon ECR Public
+        env:
+          REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
         run: |
-          aws ecr-public describe-repositories
+          docker build -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG .
+      #    docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
 
       # - name: Log in to Docker Hub
       #   uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
