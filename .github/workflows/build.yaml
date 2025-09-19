@@ -34,8 +34,8 @@ jobs:
         id: version
         run: |
           VERSION=$(cat VERSION)
-          git fetch origin tag $VERSION 2>/dev/null
-          if [ $? -eq 0 ]; then
+          git ls-remote --exit-code --tags origin $VERSION && found=true
+          if [[ "${found} =="true" ]]; then
               echo "$VERSION already exists. Please bump the version up."
               exit 1
           fi
