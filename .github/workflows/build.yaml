@@ -34,6 +34,11 @@ jobs:
         id: version
         run: |
           VERSION=$(cat VERSION)
+          git fetch origin tag $VERSION 2>/dev/null
+          if [ $? -eq 0 ]; then
+              echo "$VERSION already exists. Please bump the version up."
+              exit 1
+          fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "shortsha=$(git log -1 --pretty='format:%h')" >> "$GITHUB_OUTPUT"
 
