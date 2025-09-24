@@ -61,8 +61,8 @@ jobs:
         env:
           REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
         run: |
-          docker build --arch ${{ matrix.arch }} -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:${{ steps.version.outputs.version }}-${{ matrix.arch }}-${{ steps.version.outputs.shortsha }} .
-          docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:${{ steps.version.outputs.version }}-${{ matrix.arch }}-${{ steps.version.outputs.shortsha }}
+          podman build --arch ${{ matrix.arch }} -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:${{ steps.version.outputs.version }}-${{ matrix.arch }}-${{ steps.version.outputs.shortsha }} .
+          podman push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:${{ steps.version.outputs.version }}-${{ matrix.arch }}-${{ steps.version.outputs.shortsha }}
 
       # - name: Log in to Docker Hub
       #   uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
