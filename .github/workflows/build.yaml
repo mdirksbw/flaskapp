@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        arch: [ 'arm64' ]
+        arch: [ 'amd64','arm64' ]
     name: Build container for ${{ matrix.arch }}
     steps:
       - name: Check out the repo
