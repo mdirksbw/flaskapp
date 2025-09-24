@@ -24,8 +24,11 @@ jobs:
       AWS_REGION: us-east-1
       REGISTRY_ALIAS: medirks
       REPOSITORY: flaskapp
-    name: Build container
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [ 'amd64', 'arm64' ]
+    name: Build container for ${{ matrix.arch }}
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
@@ -59,7 +62,7 @@ jobs:
           REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
         run: |
           docker build -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:${{ steps.version.outputs.version }}-${{ steps.version.outputs.shortsha }} .
-          docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:${{ steps.version.outputs.version }}-${{ steps.version.outputs.shortsha }}
+        # docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:${{ steps.version.outputs.version }}-${{ steps.version.outputs.shortsha }}
 
       # - name: Log in to Docker Hub
       #   uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
