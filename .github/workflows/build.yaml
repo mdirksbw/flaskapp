@@ -1,0 +1,103 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+# GitHub recommends pinning actions to a commit SHA.
+# To get a newer version, you will need to update the SHA.
+# You can also reference a tag or branch, but the action may change without warning.
+
+name: Build Docker image
+
+permissions:
+  id-token: write
+
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  build:
+    env:
+      AWS_ACCOUNT_ID: 551481644935
+      AWS_REGION: us-east-1
+      REGISTRY_ALIAS: medirks
+      REPOSITORY: flaskapp
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [ 'amd64','arm64' ]
+    name: Build container for ${{ matrix.arch }}
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Get version
+        id: version
+        run: |
+          VERSION=$(cat VERSION)
+          git ls-remote --exit-code --tags origin $VERSION && found=true
+          if [[ "${found}" == "true" ]]; then
+              echo "$VERSION already exists. Please bump the version up."
+              exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "shortsha=$(git log -1 --pretty='format:%h')" >> "$GITHUB_OUTPUT"
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4.3.1
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/gha_ecr
+
+      - name: Login to Amazon ECR Public
+        id: login-ecr-public
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build, tag, and push docker image to Amazon ECR Public
+        id: build-image
+        env:
+          REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
+        run: |
+          docker_tag_snapshot=$REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:${{ steps.version.outputs.version }}-${{ matrix.arch }}-${{ steps.version.outputs.shortsha }}
+          docker_tag_prod=$REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:${{ steps.version.outputs.version }}-${{ matrix.arch }}
+          echo "docker_tag_snapshot=$docker_tag_snapshot" >> "$GITHUB_OUTPUT"
+          echo "docker_tag_prod=$docker_tag_prod" >> "$GITHUB_OUTPUT"
+          docker build --platform linux/${{ matrix.arch }} -t $docker_tag_snapshot .
+          docker push $docker_tag_snapshot
+      
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          custom_tag: ${{ steps.version.outputs.version }}
+          dry_run: ${{ github.event_name == 'pull_request' }}
+          tag_prefix: ''
+      
+      - name: Retag image for prod
+        if: ${{ github.event_name == 'push'}}
+        run: |
+          docker pull ${{ steps.build-image.outputs.docker_tag_snapshot }}
+          docker tag ${{ steps.build-image.outputs.docker_tag_snapshot }} ${{ steps.build-image.outputs.docker_tag_prod }}
+          docker push ${{ steps.build-image.outputs.docker_tag_prod }}
+
+      - name: Create a GitHub release
+        if: ${{ github.event_name == 'push'}}
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.tag_version.outputs.new_tag }}
+          name: Release ${{ steps.tag_version.outputs.new_tag }}
+          bodyFile: "CHANGELOG.md"
