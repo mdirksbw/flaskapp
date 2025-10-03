@@ -73,8 +73,8 @@ jobs:
         run: |
           docker_tag_snapshot=$REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:${{ steps.version.outputs.version }}-${{ matrix.arch }}-${{ steps.version.outputs.shortsha }}
           docker_tag_prod=$REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:${{ steps.version.outputs.version }}-${{ matrix.arch }}
-          echo $docker_tag_snapshot >> $GITHUB_OUTPUT
-          echo $docker_tag_prod >> $GITHUB_OUTPUT
+          echo "docker_tag_snapshot=$docker_tag_snapshot" >> "$GITHUB_OUTPUT"
+          echo "docker_tag_prod=$docker_tag_prod" >> "$GITHUB_OUTPUT"
           docker build --platform linux/${{ matrix.arch }} -t $docker_tag_snapshot .
           docker push $docker_tag_snapshot
 
