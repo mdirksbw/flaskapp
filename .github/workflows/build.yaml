@@ -77,13 +77,33 @@ jobs:
           echo "docker_tag_prod=$docker_tag_prod" >> "$GITHUB_OUTPUT"
           docker build --platform linux/${{ matrix.arch }} -t $docker_tag_snapshot .
           docker push $docker_tag_snapshot
+      
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          custom_tag: ${{ steps.version.outputs.version }}
+          dry_run: ${{ github.event_name == 'pull_request' }}
+
+      - name: Test tag outputs
+        run: |
+          echo "New tag: ${{ steps.tag_version.outputs.new_tag }}"
+          echo "Changelog: ${{ steps.tag_version.outputs.changelog }}"
+      
+      # - name: Create a GitHub release
+      #   uses: ncipollo/release-action@v1
+      #   with:
+      #     tag: ${{ steps.tag_version.outputs.new_tag }}
+      #     name: Release ${{ steps.tag_version.outputs.new_tag }}
+      #     body: ${{ steps.tag_version.outputs.changelog }}
 
       - name: Retag image for prod
-        #if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main'}}
+        if: ${{ github.event_name == 'push'}}
         run: |
-          echo "docker pull ${{ steps.build-image.outputs.docker_tag_snapshot }}"
-          echo "docker tag ${{ steps.build-image.outputs.docker_tag_snapshot }} ${{ steps.build-image.outputs.docker_tag_prod }}"
-          echo "docker push ${{ steps.build-image.outputs.docker_tag_prod }}"
+          docker pull ${{ steps.build-image.outputs.docker_tag_snapshot }}
+          docker tag ${{ steps.build-image.outputs.docker_tag_snapshot }} ${{ steps.build-image.outputs.docker_tag_prod }}
+          docker push ${{ steps.build-image.outputs.docker_tag_prod }}
 
 
       # - name: Log in to Docker Hub
