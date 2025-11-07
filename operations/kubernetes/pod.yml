@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: test-flaskapp
+  name: test-flaskapp
+  namespace: flaskapp
+spec:
+  containers:
+  - image: public.ecr.aws/medirks/flaskapp:0.0.2-amd64
+    name: test-flaskapp
+    resources: {}
+    env: 
+      - name: USER
+        value: "testuser"
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
