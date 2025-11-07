@@ -36,3 +36,6 @@ docker build . -t <tagname>
 docker run --rm -d --env USER=$(whoami) --publish 5000:5000 public.ecr.aws/medirks/flaskapp:<tagname>
 ```
 
+---
+## To Do
+- Fix USER environment variable in flaskapp

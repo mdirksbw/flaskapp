@@ -29,7 +29,8 @@ def config():
     return render_template('views/config.html', host=host, port=port, datacenter=datacenter, pages=get_pages(), app_name=app_name)
 
 def load_config_file():
-    with open('config.yaml', 'r', newline='') as f:
+    config_file = os.getenv("FLASKAPP_CONFIG", "config.yaml")
+    with open(config_file, 'r', newline='') as f:
         try:
             return yaml.safe_load(f)
         except yaml.YAMLError as ymlexcp:
