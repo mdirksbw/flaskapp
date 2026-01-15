@@ -1,0 +1,11 @@
+apiVersion: v1
+data:
+  config.yaml: |
+    hostname: {{ .Values.hostname }}
+    port: {{ .Values.service.targetPort }}
+    datacenter: {{ .Values.datacenter }}
+kind: ConfigMap
+metadata:
+  name: flaskapp-config
+  labels:
+  {{- include "flaskapp.labels" . | nindent 4 }}
