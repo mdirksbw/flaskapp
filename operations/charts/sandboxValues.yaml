@@ -1,0 +1,7 @@
+extraEnv: 
+  - name: DEBUG
+    value: "true"
+
+hostname: sandbox.example.com
+
+datacenter: sbx2
