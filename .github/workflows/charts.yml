@@ -4,9 +4,15 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'operations/charts/**'
+      - '.github/workflows/charts.yml'
   pull_request:
     branches:
       - '*'
+    paths:
+      - 'operations/charts/**'
+      - '.github/workflows/charts.yml'
 
 jobs:
   release:
