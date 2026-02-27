@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  flaskapp:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2026-02-27T19:48:39.703988643Z"
+    description: A Helm chart for Kubernetes
+    digest: ec36040f05a4da64d374fd59b3a8f213c122614843aff7eaa7b631a975d308e0
+    name: flaskapp
+    type: application
+    urls:
+    - https://github.com/mdirksbw/flaskapp/releases/download/flaskapp-0.1.0/flaskapp-0.1.0.tgz
+    version: 0.1.0
+generated: "2026-02-27T19:48:39.703993896Z"
