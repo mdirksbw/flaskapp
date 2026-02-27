@@ -12,6 +12,6 @@ spec:
     termination: edge
   to:
     kind: Service
-    name: flaskapp
+    name: {{ include "flaskapp.fullname" . }}
     weight: 100
   wildcardPolicy: None
