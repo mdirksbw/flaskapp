@@ -20,12 +20,17 @@ on:
     paths-ignore:
       - 'docs/**'
       - 'README.md'
+      - 'operations/**'
+      - '.github/workflows/charts.yml'
+
   pull_request:
     branches:
       - '*'
     paths-ignore:
       - 'docs/**'
       - 'README.md'
+      - 'operations/**'
+      - '.github/workflows/charts.yml'
 
 jobs:
   build:
