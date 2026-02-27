@@ -21,6 +21,7 @@ on:
       - 'docs/**'
       - 'README.md'
       - 'operations/**'
+      - '.github/workflows/charts.yml'
 
   pull_request:
     branches:
@@ -29,6 +30,7 @@ on:
       - 'docs/**'
       - 'README.md'
       - 'operations/**'
+      - '.github/workflows/charts.yml'
 
 jobs:
   build:
