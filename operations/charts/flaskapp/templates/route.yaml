@@ -5,7 +5,6 @@ metadata:
   {{- include "flaskapp.labels" . | nindent 4 }}
   name: flaskapp
 spec:
-  host: ""
   port:
     targetPort: {{ .Values.service.targetPort }}
   tls:
