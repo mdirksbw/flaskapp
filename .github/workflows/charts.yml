@@ -7,12 +7,6 @@ on:
     paths:
       - 'operations/charts/**'
       - '.github/workflows/charts.yml'
-  pull_request:
-    branches:
-      - '*'
-    paths:
-      - 'operations/charts/**'
-      - '.github/workflows/charts.yml'
 
 jobs:
   release:
@@ -34,7 +28,6 @@ jobs:
         uses: helm/chart-releaser-action@v1.6.0
         with:
           charts_dir: ./operations/charts
-          skip_upload: ${{ github.event_name == 'pull_request' }}
           skip_existing: true
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
