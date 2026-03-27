@@ -5,13 +5,12 @@ metadata:
   {{- include "flaskapp.labels" . | nindent 4 }}
   name: flaskapp
 spec:
-  host: ""
   port:
     targetPort: {{ .Values.service.targetPort }}
   tls:
     termination: edge
   to:
     kind: Service
-    name: flaskapp
+    name: {{ include "flaskapp.fullname" . }}
     weight: 100
   wildcardPolicy: None
