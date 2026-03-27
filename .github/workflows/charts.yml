@@ -35,5 +35,6 @@ jobs:
         with:
           charts_dir: ./operations/charts
           skip_upload: ${{ github.event_name == 'pull_request' }}
+          skip_existing: true
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
